@@ -153,4 +153,34 @@ I opened the **NeuroStorm Implant** malware entity, selected the **Links** tab, 
 ![Q07 — NeuroStorm Implant links](attachments/The-Card.S3.png)  
 ![Q07 — Indicator details with SHA-256](attachments/The-Card.S4.png)
 
+---
+
+### Q8) C2 IP address (CogWork Security Platform)
+
+**Answer**  
+`74.77.74.77`
+
+**Method**  
+I logged in with the provided credentials (`nvale / CogworkBurning!`), searched the platform for the SHA-256 identified in Q7, and reviewed the **Network Communication** section of the matching record. It listed the HTTPS C2 endpoint.
+
+**Evidence**  
+![Q08](attachments/The-Card,S5.png)
+
+---
+
+### Q9) Persistence file — full path
+
+**Answer**  
+`/opt/lilnunc/implant/4a4d_persistence.sh`
+
+**Method**  
+I opened **View Details** in the Scan Results and reviewed **Behavioral Analysis**. Under **File Operations**, I observed the `CREATE` event for the persistence script, along with a config file and a change to `/etc/rc.local`.
+
+**Evidence**  
+![Q09](attachments/The-Card.S6.png)
+
+---
+
+
+
 
