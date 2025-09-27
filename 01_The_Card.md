@@ -227,6 +227,6 @@ I browsed to the third IP in **CogNet Scanner**, opened **Details → Overview**
 I opened the **SERVICES** tab in CogNet Scanner and inspected the banner for the suspicious **unknown** service (port **7477/tcp**).
 
 **Evidence**  
-![Q12](attachments/The-Card.S8.png)
+![Q12](attachments/The-Card.S9.png)
 
 
