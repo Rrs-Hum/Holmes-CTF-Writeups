@@ -47,7 +47,7 @@
 ## Environment
 
 - **Host:** Kali Linux  
-- **Tooling:** `bash`, `awk`, `grep`, `curl`, `jq`, `nmap`, `whois`  
+- **Tooling:** `bash`, `grep`, `curl`, 
 - **Workflow:** logs → WAF bypass & web-shell → exfil traces → CTI enrichment → malware IOC pivot → infra recon
 
 ---
@@ -55,6 +55,9 @@
 ## Investigation Workflow (Mapped to Q1–Q12)
 
 ### 1) First User-Agent against the honeypot
+
+**Answer:** 
+`Lilnunc/4A4D — SpecterEye`
 
 **Method**  
 Listed the first 10 access-log entries to identify the earliest request and extract its `User-Agent`.
@@ -77,6 +80,9 @@ head -10 access.log
 
 ### Q2) Web shell file name (after WAF bypass)
 
+**Answer** 
+`temp_4A4D.php`
+
 **Method**  
 Searched WAF logs for shell-related detections and actions to identify creation/execution events.
 
@@ -93,6 +99,9 @@ grep -i shell waf.log
 ---
 
 ### Q3) Name of the exfiltrated database
+
+**Answer** 
+`database_dump_4A4D.sql`
 
 **Method**  
 Searched logs for database-related accesses to identify any exported/dumped files.
@@ -111,12 +120,16 @@ application.log:2025-05-19 07:16:01 [CRITICAL] webapp.security - Database direct
 
 ### Q4) Recurring “meaningless” string
 
-**Answer:** `4A4D`  
+**Answer:** 
+`4A4D`  
 The string **4A4D** consistently tags the attacker’s activity (tool UA, filenames, and exfil dump), supporting campaign/operator attribution.
 
 ---
 
 ### Q5) CTI campaigns linked to the honeypot (OmniYard-3)
+
+**Answer**
+`5`
 
 **Method**  
 In OmniYard-3, I filtered for the recurring marker `4A4D`. The graph view shows five separate **Campaign** entities linked to the JM investigation node.
@@ -181,6 +194,41 @@ I opened **View Details** in the Scan Results and reviewed **Behavioral Analysis
 
 ---
 
+### Q10) Open ports on the server (CogNet Scanner)
 
+**Answer**  
+`11`
+
+**Method**  
+I browsed to the third IP:port, opened the **CogNet Scanner** results, and read the **Overview** panel, which listed the count of **Open Ports**.
+
+**Evidence**  
+![Q10](attachments/The-Card.S7.png)
+
+---
+
+### Q11) Organization owning the IP
+
+**Answer**  
+`SenseShield MSP`
+
+**Method**  
+I browsed to the third IP in **CogNet Scanner**, opened **Details → Overview**, and read the **Organization** field for the host associated with the C2 IP from Q08.
+
+**Evidence**  
+![Q11](attachments/The-Card.S8.png)
+
+---
+
+### Q12) Cryptic service banner
+
+**Answer**  
+"He's a ghost I carry, not to haunt me, but to hold me together - NULLINC REVENGE"
+
+**Method**  
+I opened the **SERVICES** tab in CogNet Scanner and inspected the banner for the suspicious **unknown** service (port **7477/tcp**).
+
+**Evidence**  
+![Q12](attachments/The-Card.S8.png)
 
 
