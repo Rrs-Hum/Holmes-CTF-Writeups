@@ -1,4 +1,3 @@
-# Holmes-CTF-Write-ups
 # Holmes CTF 2025 – Write-ups
 
 A collection of challenge write-ups for **Holmes CTF 2025**.  
