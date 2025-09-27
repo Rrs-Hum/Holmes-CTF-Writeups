@@ -137,5 +137,5 @@ In OmniYard-3, I filtered for the recurring marker `4A4D`. The graph view shows 
 In OmniYard-3, I opened each `4A4D`-linked campaign, selected the **Links** tab, and counted entities of type **Malware** and **Tool** associated with them.
 
 **Evidence**
-
+![Q06](attachments/The-Card.S2.png)
 
