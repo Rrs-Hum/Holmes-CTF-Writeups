@@ -109,7 +109,7 @@ application.log:2025-05-19 07:16:01 [CRITICAL] webapp.security - Database direct
 
 ---
 
-Q4) Recurring “meaningless” string
+### Q4) Recurring “meaningless” string
 
 **Answer:** `4A4D`  
 The string **4A4D** consistently tags the attacker’s activity (tool UA, filenames, and exfil dump), supporting campaign/operator attribution.
@@ -121,5 +121,21 @@ The string **4A4D** consistently tags the attacker’s activity (tool UA, filena
 **Method**  
 In OmniYard-3, I filtered for the recurring marker `4A4D`. The graph view shows five separate **Campaign** entities linked to the JM investigation node.
 
+**Evidence**
 ![Q05](attachments/The-Card.S1.png)
+
+---
+
+### Q6) Total tools and malware linked to the campaigns
+
+**Answer**  
+`9`  
+- **Malware:** 5  
+- **Tools:** 4
+
+**Method**  
+In OmniYard-3, I opened each `4A4D`-linked campaign, selected the **Links** tab, and counted entities of type **Malware** and **Tool** associated with them.
+
+**Evidence**
+
 
