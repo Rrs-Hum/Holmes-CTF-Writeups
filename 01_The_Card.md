@@ -24,8 +24,6 @@
 
 **Task:** Analyze the honeypot logs and CTI data to answer the following:
 
----
-
 ## Answers (TL;DR)
 
 1) **First User-Agent used by the attacker:** `Lilnunc/4A4D — SpecterEye`  
