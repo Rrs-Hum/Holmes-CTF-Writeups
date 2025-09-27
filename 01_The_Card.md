@@ -139,3 +139,18 @@ In OmniYard-3, I opened each `4A4D`-linked campaign, selected the **Links** tab,
 **Evidence**
 ![Q06](attachments/The-Card.S2.png)
 
+---
+
+### Q7) Malware repeatedly used — SHA-256 hash
+
+**Answer**  
+`7477c4f5e6d7c8b9a0f1e2d3c4b5a6f7e8d9c0b1a2f3e4d5c6b7a8f9e0d17477`
+
+**Method**  
+I opened the **NeuroStorm Implant** malware entity, selected the **Links** tab, and followed the indicator **indicator--neuralstorm-hash-2025-0001**. In the **Details** tab of that indicator, I observed the SHA-256 value.
+
+**Evidence**  
+![Q07 — NeuroStorm Implant links](attachments/The-Card.S3.png)  
+![Q07 — Indicator details with SHA-256](attachments/The-Card.S4.png)
+
+
