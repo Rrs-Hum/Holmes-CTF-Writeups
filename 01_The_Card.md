@@ -229,4 +229,24 @@ I opened the **SERVICES** tab in CogNet Scanner and inspected the banner for the
 **Evidence**  
 ![Q12](attachments/The-Card.S9.png)
 
+---
+
+## Lessons Learned & Reflections
+
+### Key takeaways
+- I let the **logs lead** the story, then pivoted to CTI and malware intel.
+- The marker **`4A4D`** appeared everywhere (UA → web shell → DB dump → malware), which **tightened attribution**.
+- **Behavioral intel** (C2 IP, ports, file ops) was more useful than AV labels.
+- The **persistence path** `/opt/lilnunc/implant/4a4d_persistence.sh` became a high-value IOC for detection and response.
+- **Infra context** (open ports, banner, owning org) rounded out the C2 picture.
+
+### What I would improve
+- Automate the log steps (first-seen UA, recurring tokens, web-shell uploads).
+- Track IOCs (hash → C2 → persistence) in one place with confidence/expiry.
+- Turn findings into rules/playbooks sooner (web-shell upload, `rc.local` changes).
+
+### Reflection
+A single clue—**`4A4D`**—linked recon, WAF bypass, exfil, malware, and C2. Pulling on that thread turned scattered alerts into a clear, actionable narrative.
+
+
 
