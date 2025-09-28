@@ -1,7 +1,9 @@
-# Holmes CTF 2025 — Write-ups
+## 🏅 Holmes CTF 2025 — Participation
+<p align="center">  <img src="attachments/Certificate-RrsHum.png" alt="Holmes CTF 2025 Certificate — Rares Lascau (Null Raider)" width="650">
+</p>
 
 A small, focused portfolio of my Blue Team work from **Holmes CTF 2025**.  
-My goal is to show how I think, investigate, and communicate as a **SOC analyst / DFIR responder** — not just the final answers.
+My goal is to show how I think, investigate, and communicate as a **SOC analyst / DFIR responder** 
 
 ---
 
