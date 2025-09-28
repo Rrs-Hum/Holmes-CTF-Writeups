@@ -10,7 +10,7 @@ Purpose: showcase my **SOC analyst skills** in detection engineering, log triage
 | #  | Name                   | Focus (SOC Skills)                  | Difficulty | Write-up |
 |----|------------------------|-------------------------------------|------------|----------|
 | 01 | The Card               | Indicator pivoting, log triage      | Easy       | [Read](01_The_Card.md) |
-| 02 | The Enduring Echo      | Host triage, abnormal processes     | Easy       | (coming soon) |
+| 02 | The Enduring Echo      | Host triage, abnormal processes     | Easy       | [Read](02_The_Enduring_Echo.md) |
 | 03 | The Watchman’s Residue | Cloud/service logs, secret leakage  | Medium     | (coming soon) |
 | 04 | The Payload            | Malware behavior & propagation      | Hard       | (coming soon) |
 | 05 | The Tunnel Without Walls | Memory forensics, covert channels | Hard       | (coming soon) |
