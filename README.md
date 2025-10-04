@@ -33,8 +33,8 @@ My goal is to show how I think, investigate, and communicate as a **SOC analyst 
 | 01 | The Card                 | Indicator pivoting, web/WAF logs, CTI  | Easy       | [Read](01_The_Card.md) |
 | 02 | The Enduring Echo        | Host triage, persistence, lateral move | Easy       | [Read](02_The_Enduring_Echo.md) |
 | 03 | The Watchman’s Residue   | Cloud/service logs, secret leakage     | Medium     | [Read](03_The_Watchmans_Residue.md) |
-| 04 | The Payload              | Malware behavior & propagation         | Hard       | Only Partialy Completed the Challenge |
-| 05 | The Tunnel Without Walls | Memory forensics, covert channels      | Hard       | Only Partialy Completed the Challenge |
+| 04 | The Payload              | Malware behavior & propagation         | Hard       | Only Partially Completed the Challenge |
+| 05 | The Tunnel Without Walls | Memory forensics, covert channels      | Hard       | Only Partially Completed the Challenge |
 
 ---
 
