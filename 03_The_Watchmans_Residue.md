@@ -183,7 +183,7 @@ Here is the chat history important for this challenge:
 
 Applied a display filter on the attacker IP (`ip.addr == 10.0.69.45`) and reviewed NBNS/Browser protocol frames. The **Host Announcement** broadcasts from that IP reveal the system name.
 
-![Q01](attachments/The_Watchman_.png)
+![Q02](attachments/The_watchmans_residue_q02.png)
 
 **Answer:** `WATSON-ALPHA-2`
 
