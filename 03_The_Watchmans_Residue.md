@@ -171,7 +171,7 @@ Here is the chat history important for this challenge:
   <SNIP>
 ]
 ```
-![Q01](attachments/.png)
+![Q01](attachments/The_Watchman_attck.IP.png.png)
 
 **Answer:** `10.0.69.45`
 
