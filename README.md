@@ -40,7 +40,6 @@ My goal is to show how I think, investigate, and communicate as a **SOC analyst 
 
 ## 🧭 What “good” looks like in these write-ups
 
-- **TL;DR:** one screen with all final answers.
 - **How I worked:** the exact commands/queries I ran (copy/paste ready).
 - **Evidence:** trimmed log/XML/registry snippets with the relevant fields highlighted.
 - **Lessons Learned:** 5–8 bullets you can turn into controls or a playbook.
