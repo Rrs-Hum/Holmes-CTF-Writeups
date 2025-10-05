@@ -31,11 +31,6 @@ An attacker abused an MSP’s **AI helpdesk** to obtain **remote access credenti
 - RMM telemetry/logs (sessions, transfers, script exec)
 - Packet capture (PCAP)
 
-**Primary Parsers/Utilities**
-- **Windows:** `evtxexport/evtx_dump`, `grep`, `awk`, `python3`
-- **Timeline:** `log2timeline.py` 
-- **Network:** Wireshark / `tshark` 
-
 ---
 
  **Question 1:**
@@ -297,6 +292,245 @@ The `TeamViewer15_Logfile.log` shows multiple file transfers (e.g., `mimikatz.ex
 **Answer:** `C:\Windows\Temp\safe\`
 
 ---
+
+**Question 11:**
+
+> Among the staged tools was a **browser credential harvester**. How long did it run before it was closed? (milliseconds)
+
+Transparency first: I **didn’t get this during the live event**. I was working from a Linux VM and had to spin up a Windows VM on my M1 Mac, then fetch and configure **Eric Zimmerman’s** tools—by the time that was sorted, the window had passed.
+
+After the event, I did it properly:
+- Mounted the image and loaded the user hives into **Registry Explorer**.
+- Navigated to **`Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist`** → the GUID subkeys (ROT13-decoded program names).
+- Found the entry for **`C:\Windows\Temp\safe\webbrowserpassview.exe`** (the credential dumper referenced in the TeamViewer log).
+- The artifact showed a **Focus/Run time ≈ 8 seconds** for that executable. Converted to milliseconds, that’s **8000 ms**.
+
+![Q02](attachments/The_watchmans_residue_Q11.png)
+
+**Answer:** `8000`
+
+---
+
+**Question 12:**
+
+> The attacker executed an **OS credential dumping** tool on the system. When was it executed? (YYYY-MM-DD HH:MM:SS)
+
+I first chased **CredHistView** (because of “Credential” in the name) but that tool only lists credential history—it’s **not** a dumper. The real target here was **mimikatz**.  
+I parsed the `$J` USN journal with **MFTECmd** and spotted creation of the **prefetch** file `MIMIKATZ.EXE-A6294E76.pf`. Prefetch files are created on first run, so that **create timestamp** marks execution time.
+```csv
+Name,Extension,EntryNumber,SequenceNumber,ParentEntryNumber,ParentSequenceNumber,ParentPath,UpdateSequenceNumber,UpdateTimestamp,UpdateReasons,FileAttributes,OffsetToData,SourceFile
+MIMIKATZ.EXE-A6294E76.pf,.pf,285694,8,58188,2,,514726464,2025-08-20 10:07:08.1744759,FileCreate,Archive|NotContentIndexed,36559424,.\TRIAGE_IMAGE_COGWORK-CENTRAL\C\$Extend\$J
+MIMIKATZ.EXE-A6294E76.pf,.pf,285694,8,58188,2,,514726576,2025-08-20 10:07:08.1744759,DataExtend|FileCreate,Archive|NotContentIndexed,36559536,.\TRIAGE_IMAGE_COGWORK-CENTRAL\C\$Extend\$J
+MIMIKATZ.EXE-A6294E76.pf,.pf,285694,8,58188,2,,514726688,2025-08-20 10:07:08.1744759,DataExtend|FileCreate|Close,Archive|NotContentIndexed,36559648,.\TRIAGE_IMAGE_COGWORK-CENTRAL\C\$Extend\$J
+```
+
+**Answer:** `2025-08-20 10:07:08`
+
+---
+
+**Question 13:**
+
+> The attacker exfiltrated multiple sensitive files. When did the exfiltration **start**? (YYYY-MM-DD HH:MM:SS)
+
+Searched `TeamViewer15_Logfile.log` for **“Send file”** entries. The first transfer (e.g., `COG-HR-EMPLOYEES.pdf`) appears at the earliest timestamp in that burst.  
+Note: This log records **local time** (here it aligned as UTC+1 in the challenge), so I used the value as written.
+```csv
+2025/08/20 11:12:07.902  1052       5128 G1   Send file C:\Windows\Temp\flyover\COG-HR-EMPLOYEES.pdf
+2025/08/20 11:12:07.930  2804       2904 S0   UdpOutputTracker(): max 73193 effectiveSent 74574 RTT 327
+2025/08/20 11:12:07.942  2804       2904 S0   UdpOutputTracker(): max 74574 effectiveSent 75955 RTT 327
+2025/08/20 11:12:07.975  2804       2904 S0   UdpOutputTracker(): max 75955 effectiveSent 77336 RTT 327
+2025/08/20 11:12:07.985  1052       5128 G1   Send file C:\Windows\Temp\flyover\COG-SAT LAUNCH.pdf
+2025/08/20 11:12:08.002  1052       5128 G1   Send file C:\Windows\Temp\flyover\COG-WATSON-ALPHA-CODEBASE SUMMARY.pdf
+2025/08/20 11:12:08.013  1052       5128 G1   Send file C:\Windows\Temp\flyover\dump.txt
+2025/08/20 11:12:08.030  1052       5128 G1   Send file C:\Windows\Temp\flyover\Heisen-9 remote snapshot.kdbx
+```
+
+**Answer:** `2025-08-20 11:12:07`
+
+---
+
+**Question 14:**
+
+> Before exfiltration, several files were moved to the staged folder. When was the **Heisen-9 facility backup database** moved for exfiltration? (YYYY-MM-DD HH:MM:SS)
+
+I parsed the `$J` (USN journal) with **MFTECmd** and reviewed the entries for  
+`Heisen-9 remote snapshot.kdbx` in the staging directory. The initial **FileCreate** event indicates when the file was placed there for exfiltration.
+```csv
+Name,Extension,EntryNumber,SequenceNumber,ParentEntryNumber,ParentSequenceNumber,ParentPath,UpdateSequenceNumber,UpdateTimestamp,UpdateReasons,FileAttributes,OffsetToData,SourceFile
+Heisen-9 remote snapshot.kdbx,.kdbx,286683,2,286680,2,,514768896,2025-08-20 10:11:09.7095793,FileCreate,Archive,36601856,.\TRIAGE_IMAGE_COGWORK-CENTRAL\C\$Extend\$J
+Heisen-9 remote snapshot.kdbx,.kdbx,286683,2,286680,2,,514769016,2025-08-20 10:11:09.7095793,FileCreate|Close,Archive,36601976,.\TRIAGE_IMAGE_COGWORK-CENTRAL\C\$Extend\$J
+Heisen-9 remote snapshot.kdbx,.kdbx,286683,2,286680,2,,514769136,2025-08-20 10:11:09.7105935,DataExtend,Archive,36602096,.\TRIAGE_IMAGE_COGWORK-CENTRAL\C\$Extend\$J
+Heisen-9 remote snapshot.kdbx,.kdbx,286683,2,286680,2,,514769256,2025-08-20 10:11:09.7105935,DataOverwrite|DataExtend,Archive,36602216,.\TRIAGE_IMAGE_COGWORK-CENTRAL\C\$Extend\$J
+Heisen-9 remote snapshot.kdbx,.kdbx,286683,2,286680,2,,514769376,2025-08-20 10:11:09.7105935,DataOverwrite|DataExtend|BasicInfoChange,Archive,36602336,.\TRIAGE_IMAGE_COGWORK-CENTRAL\C\$Extend\$J
+Heisen-9 remote snapshot.kdbx,.kdbx,286683,2,286680,2,,514769496,2025-08-20 10:11:09.7105935,DataOverwrite|DataExtend|BasicInfoChange|Close,Archive,36602456,.\TRIAGE_IMAGE_COGWORK-CENTRAL\C\$Extend\$J
+```
+
+**Answer:** `2025-08-20 10:11:09`
+
+---
+
+**Question 15:**
+
+> When did the attacker access and read a TXT file—likely a tool’s output based on the filename? (YYYY-MM-DD HH:MM:SS)
+
+I examined a shortcut (`.lnk`) referencing `dump.txt`. Windows shortcut artifacts preserve the target file’s **last accessed** timestamp. Using `lnkparse`, the entry for `dump.txt` shows an **Accessed time** of `2025-08-20 10:08:06.369297+00:00`. Normalized to the required format (UTC, seconds precision):
+```powershell
+Windows Shortcut Information:
+   Guid: 00021401-0000-0000-C000-000000000046
+   Link flags: HasTargetIDList | HasLinkInfo | HasRelativePath | HasWorkingDir | IsUnicode | DisableKnownFolderTracking - (2097307)
+   File flags: FILE_ATTRIBUTE_ARCHIVE - (32)
+   Creation time: 2025-08-20 10:07:23.317115+00:00
+   Accessed time: 2025-08-20 10:08:06.369297+00:00
+   Modified time: 2025-08-20 10:08:06.369297+00:00
+   File size: 10118
+   Icon index: 0
+   Windowstyle: SW_SHOWNORMAL
+   Hotkey: UNSET - UNSET {0x0000}
+```
+
+**Answer:** `2025-08-20 10:08:06`
+
+---
+
+**Question 16:**
+
+> The attacker created a persistence mechanism on the workstation. **When was the persistence set up?** (YYYY-MM-DD HH:MM:SS)
+
+I validated persistence via the **Winlogon** key:
+`HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon`.
+
+- **Screenshot 1** shows the `Userinit` value modified to include `JM.exe` (`Userinit.exe, JM.exe`), which triggers the binary at logon.
+  
+ ![Q016](attachments/The_watchmans_residue_Q16.png)
+
+- **Screenshot 2** shows the key’s **LastWrite** timestamp reflecting when this change was made: **2025-08-20 10:13:57**.
+  
+![Q016](attachments/The_watchmans_residue_Q16.2.png)
+
+**Answer:** `2025-08-20 10:13:57`
+
+---
+
+**Question 17:**
+
+> What is the **MITRE ATT&CK** sub-technique ID for this persistence method? (`Txxxx.xxx`)
+
+The persistence hinges on **Winlogon** autostart execution via the `Userinit` value—mapped to ATT&CK **Boot or Logon Autostart Execution: Winlogon Helper DLL**.
+
+![Q017](attachments/The_watchmans_residue_Q17.png)
+
+**Answer:** `T1547.004`
+
+---
+
+**Question 18:**
+
+> When did the malicious **RMM** session end? (YYYY-MM-DD HH:MM:SS)
+
+Checked the TeamViewer session entry for **James Moriarty** and read the **End** timestamp.
+```csv
+514162531	James Moriarty	20-08-2025 09:58:25	20-08-2025 10:14:27	Cogwork_Admin	RemoteControl	{7ca6431e-30f6-45e3-9ac6-0ef1e0cecb6a}
+```
+
+**Answer:** `2025-08-20 10:14:27`
+
+---
+
+**Question 19:**
+
+> The attacker found a password in the exfiltrated data and moved laterally into **CogWork-1**. What are the credentials for **Heisen-9-WS-6**? (`user:password`)
+
+Here’s exactly how I cracked the KeePass DB and pulled the workstation creds:
+
+**Extract the KeePass hash with `keepass2john`:**
+```bash
+➜  keepass2john 'acquired file (critical).kdbx' 
+acquired file (critical):$keepass$*2*60000*0*7b4f7711f96d9f062110d48b1c457de6b89e291b826986458642fa4c60ea7bf6*befbbe1e7a2ed2d66cfdb43c63f755223a5047432367446853643edb83dbeca8*97d7a47bd2b7b30eba5b7b4adef27f80*93788171c3dd00341f77d3a7472f128c4b1fded44d043f1567eac64ac7de1cdc*e9158bafaf5877f338e49a6a1adc6f7be8a647e76d01173ea2df162070fb8957
+
+➜  cat hash.txt 
+acquired file (critical):$keepass$*2*60000*0*7b4f7711f96d9f062110d48b1c457de6b89e291b826986458642fa4c60ea7bf6*befbbe1e7a2ed2d66cfdb43c63f755223a5047432367446853643edb83dbeca8*97d7a47bd2b7b30eba5b7b4adef27f80*93788171c3dd00341f77d3a7472f128c4b1fded44d043f1567eac64ac7de1cdc*e9158bafaf5877f338e49a6a1adc6f7be8a647e76d01173ea2df162070fb8957
+
+➜  john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt 
+Using default input encoding: UTF-8
+Loaded 1 password hash (KeePass [SHA256 AES 32/64])
+Cost 1 (iteration count) is 60000 for all loaded hashes
+Cost 2 (version) is 2 for all loaded hashes
+Cost 3 (algorithm [0=AES 1=TwoFish 2=ChaCha]) is 0 for all loaded hashes
+Will run 4 OpenMP threads
+Press 'q' or Ctrl-C to abort, almost any other key for status
+cutiepie14       (acquired file (critical))     
+1g 0:00:03:52 DONE (2025-09-26 03:13) 0.004310g/s 185.7p/s 185.7c/s 185.7C/s devilboy..cutiepie!
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed. 
+
+➜  john --show hash.txt
+acquired file (critical):cutiepie14
+
+1 password hash cracked, 0 left
+```
+**Answer:** `Werni:Quantum1!`
+
+---
+
+## 🎓 Lessons Learned
+
+- 🤖 **AI helpdesks can leak secrets.** A friendly chatbot can be nudged into sharing credentials. Add guardrails, test with red/blue teaming, and filter sensitive outputs.
+- 🛠️ **RMM access is a crown jewel.** Protect it with MFA, IP allow-lists/VPN, device certs, and least privilege. Treat RMM script-runner logs like domain-admin activity.
+- 🧭 **Names can mislead.** “CredHistView” sounded right, but **mimikatz** was the real credential dumper. Always confirm what a tool actually does before diving in.
+- ⏱️ **Timezones matter.** Normalize to **UTC**, but note sources that log **local time** (e.g., TeamViewer). Mismatched timebases = wrong conclusions.
+- 🔗 **Correlate across artifacts.** One clue rarely tells the story. TeamViewer logs + PCAP + USN `$J` + LNK + Registry = a solid, defensible timeline.
+- 🧪 **Prep your lab early.** Delays setting up a Windows VM and forensics tools cost me answers during the live window. Pre-bake images and toolchains.
+- 🔐 **Cracking discipline.** Use the right mode/approach. Switching to **John the Ripper** (and the correct format) turned a dead end into a quick win.
+
+---
+
+## 💭 Reflections
+
+- 🧵 **Small facts, big picture.** The wins came from stitching together tiny signals—one session row, one LNK access time, one prefetch entry—into a clean story.
+- ⏳ **Honesty about time.** I didn’t finish within the event window. Spinning up the Windows VM and configuring Eric Zimmerman’s tools took longer than planned. The post-event grace period let me verify UserAssist runtime and tighten the timeline.
+- 🗺️ **MITRE guided the hunt.** Mapping persistence to **T1547.004** (Winlogon autostart) pointed me straight to `Winlogon\Userinit` and the exact change time.
+- 🧘 **Slow down, re-read.** The KeePass crack finally landed when I paused, checked formats, and adjusted the tool/mode—then it popped in minutes.
+
+---
+
+## 🔧 Tools & Techniques Used
+
+**Host & Registry**
+- 🧰 **Eric Zimmerman**  
+  - **MFTECmd** — parsed **USN `$J`** to spot file create/close and the **prefetch** for `MIMIKATZ.EXE-*.pf`.  
+  - **Registry Explorer** — reviewed **UserAssist** (runtime for `webbrowserpassview.exe`) and **Winlogon\Userinit** persistence (`JM.exe`) with LastWrite times.
+- 🧷 **lnkparse** — pulled **Accessed** time from the shortcut to `dump.txt`.
+- (Nice-to-have) **PECmd / AmcacheParser** for prefetch/install traces.
+
+**Remote Access / RMM Evidence**
+- 🖥️ **TeamViewer15_Logfile.log** — confirmed **Start/End** of the attacker session, file transfers, and the **RMM account** used.
+
+**Network**
+- 🌐 **Wireshark / tshark** — traced `/api/messages` traffic to rebuild the chat, identify the attacker’s IP, and capture first/last messages.
+
+**Credential Cracking**
+- 🔓 **keepass2john** — converted the `.kdbx` to a crackable hash.  
+- 🧠 **John the Ripper** — cracked the master password with `rockyou.txt`, verified via `john --show`.
+
+**Process & Mapping**
+- 🧩 **MITRE ATT&CK** — persistence mapped to **T1547.004** (**Winlogon Helper / Autostart Execution**).
+- 🕰️ **Time discipline** — UTC-first timeline, with notes when a source records **local time** (TeamViewer).
+
+**Workflow Tips**
+- 🧾 Keep a living **IOC list** (paths, hashes, IPs/domains) as you go.
+- 🗂️ Tag every timeline row with its **source** and **timezone**.
+- ✅ Make timeline entries **atomic** and factual first—summarize only after the evidence is set.
+
+
+
+
+
+
+
+
+
+
+
 
 
 
