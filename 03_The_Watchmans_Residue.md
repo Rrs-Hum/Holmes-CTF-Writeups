@@ -7,7 +7,7 @@
 
 
 
-## Executive Summary
+## Summary
 An attacker abused an MSP’s **AI helpdesk** to obtain **remote access credentials**, then used (or installed) **RMM** components to maintain access on a Windows endpoint. Host triage artifacts (services, scheduled tasks, PowerShell logs, Amcache/Prefetch) and **PCAP** traffic show **beaconing** and limited **file transfer** activity. By correlating **RMM logs**, **Windows triage**, and **network captures**, I rebuilt the sequence of actions, identified **persistence**, and extracted **IOCs**.
 
 **Outcome:** A working, minute-level timeline; confirmed persistence mechanism; prioritized IOCs for blocking; concrete hardening steps for MSP/RMM exposure.
